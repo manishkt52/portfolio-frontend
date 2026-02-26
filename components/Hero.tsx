@@ -1,3 +1,4 @@
+"use client";
 import { FaLocationArrow } from "react-icons/fa6";
 
 import MagicButton from "./MagicButton";
@@ -57,7 +58,8 @@ const Hero = () => {
           />
 
           <p className="text-center md:tracking-wider mb-4 text-sm md:text-lg lg:text-2xl">
-            Hi! I&apos;m Manish, an AI Engineer and Next.js Developer based in New Delhi, India.
+            Hi! I&apos;m Manish, an AI Engineer and Next.js Developer based in
+            New Delhi, India.
           </p>
 
           <a href="#about">
