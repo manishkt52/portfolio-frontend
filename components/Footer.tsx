@@ -18,8 +18,7 @@ const Footer = () => {
       {/* Contact Section */}
       <div className="flex flex-col items-center text-center px-4">
         <h1 className="heading lg:max-w-[45vw]">
-          Ready to take <span className="text-purple">your</span> digital
-          presence to the next level?
+          <span className="text-purple">Ready to take your digital presence to the next level?</span>
         </h1>
 
         <p className="text-white-200 md:mt-10 my-5">

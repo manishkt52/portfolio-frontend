@@ -1,77 +1,59 @@
 "use client";
-import { FaLocationArrow } from "react-icons/fa6";
 
+import { FaLocationArrow } from "react-icons/fa6";
 import MagicButton from "./MagicButton";
 import { Spotlight } from "./ui/Spotlight";
 import { TextGenerateEffect } from "./ui/TextGenerateEffect";
 
 const Hero = () => {
   return (
-    <div className="pb-20 pt-36">
-      {/**
-       *  UI: Spotlights
-       *  Link: https://ui.aceternity.com/components/spotlight
-       */}
-      <div>
-        <Spotlight
-          className="-top-40 -left-10 md:-left-32 md:-top-20 h-screen"
-          fill="white"
-        />
-        <Spotlight
-          className="h-[80vh] w-[50vw] top-10 left-full"
-          fill="purple"
-        />
-        <Spotlight className="left-80 top-28 h-[80vh] w-[50vw]" fill="blue" />
-      </div>
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-[#0B1120] via-[#0F172A] to-[#1e1b4b] pb-20 pt-36">
+      {/* 🔥 Spotlights */}
+      <Spotlight
+        className="-top-40 -left-10 md:-left-32 md:-top-20 h-screen"
+        fill="white"
+      />
+      <Spotlight
+        className="h-[80vh] w-[50vw] top-10 left-full"
+        fill="#6366F1"
+      />
+      <Spotlight className="left-80 top-28 h-[80vh] w-[50vw]" fill="#3B82F6" />
 
-      {/**
-       *  UI: grid
-       *  change bg color to bg-black-100 and reduce grid color from
-       *  0.2 to 0.03
-       */}
-      <div
-        className="h-screen w-full dark:bg-black-100 bg-white dark:bg-grid-white/[0.03] bg-grid-black-100/[0.2]
-       absolute top-0 left-0 flex items-center justify-center"
-      >
-        {/* Radial gradient for the container to give a faded look */}
-        <div
-          // chnage the bg to bg-black-100, so it matches the bg color and will blend in
-          className="absolute pointer-events-none inset-0 flex items-center justify-center dark:bg-black-100
-         bg-white [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"
+      {/* 🔥 Grid Background (Subtle Dark Version) */}
+      <div className="absolute inset-0 bg-grid-white/[0.03]" />
+
+      {/* 🔥 Radial Fade Overlay */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,black)] pointer-events-none" />
+
+      {/* 🔥 Main Content */}
+      <div className="relative z-10 container mx-auto px-6 flex flex-col items-center text-center space-y-8">
+        {/* Top Label */}
+        <p className="uppercase tracking-[0.3em] text-xs sm:text-sm text-indigo-300 max-w-xs">
+          Dynamic Web Magic with Next.js
+        </p>
+
+        {/* Main Heading */}
+        <TextGenerateEffect
+          words="Transforming Concepts into Seamless User Experiences"
+          className="max-w-4xl text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.1] tracking-tight text-white"
         />
-      </div>
 
-      <div className="flex justify-center relative my-20 z-10">
-        <div className="max-w-[89vw] md:max-w-2xl lg:max-w-[60vw] flex flex-col items-center justify-center">
-          <p className="uppercase tracking-widest text-xs text-center text-blue-100 max-w-80">
-            Dynamic Web Magic with Next.js
-          </p>
+        {/* Subtitle */}
+        <p className="max-w-2xl text-slate-300 text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed">
+          Hi! I&apos;m Manish — an AI Engineer & Next.js Developer crafting
+          modern, scalable, and high-performance digital experiences.
+        </p>
 
-          {/**
-           *  Link: https://ui.aceternity.com/components/text-generate-effect
-           *
-           *  change md:text-6xl, add more responsive code
-           */}
-          <TextGenerateEffect
-            words="Transforming Concepts into Seamless User Experiences"
-            className="text-center text-[40px] md:text-5xl lg:text-6xl"
+        {/* CTA Button */}
+        <a href="#about">
+          <MagicButton
+            title="Show my work"
+            icon={<FaLocationArrow />}
+            position="right"
           />
-
-          <p className="text-center md:tracking-wider mb-4 text-sm md:text-lg lg:text-2xl">
-            Hi! I&apos;m Manish, an AI Engineer and Next.js Developer based in
-            New Delhi, India.
-          </p>
-
-          <a href="#about">
-            <MagicButton
-              title="Show my work"
-              icon={<FaLocationArrow />}
-              position="right"
-            />
-          </a>
-        </div>
+        </a>
       </div>
-    </div>
+    </section>
   );
 };
 

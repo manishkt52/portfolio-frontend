@@ -1,96 +1,107 @@
 "use client";
+
 import { cn } from "@/lib/utils";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
+
+interface BackgroundGradientAnimationProps {
+  gradientBackgroundStart?: string;
+  gradientBackgroundEnd?: string;
+  pointerColor?: string; // "r, g, b"
+  size?: string; // e.g. "80%" or "600px"
+  blendingValue?: React.CSSProperties["mixBlendMode"];
+  children?: React.ReactNode;
+  className?: string;
+  containerClassName?: string;
+  interactive?: boolean;
+  pointerOpacity?: number;
+  blurStrength?: string; // e.g. "blur-3xl"
+}
 
 export const BackgroundGradientAnimation = ({
-  gradientBackgroundStart = "rgb(108, 0, 162)",
-  gradientBackgroundEnd = "rgb(0, 17, 82)",
-  firstColor = "18, 113, 255",
-  secondColor = "221, 74, 255",
-  thirdColor = "100, 220, 255",
-  fourthColor = "200, 50, 50",
-  fifthColor = "180, 180, 50",
+  gradientBackgroundStart = "#0B1120",
+  gradientBackgroundEnd = "#111827",
   pointerColor = "140, 100, 255",
   size = "80%",
   blendingValue = "hard-light",
   children,
   className,
-  interactive = true,
   containerClassName,
-}: any) => {
-  const interactiveRef = useRef<HTMLDivElement>(null);
+  interactive = true,
+  pointerOpacity = 0.6,
+  blurStrength = "blur-3xl",
+}: BackgroundGradientAnimationProps) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const pointerRef = useRef<HTMLDivElement>(null);
 
-  const [curX, setCurX] = useState(0);
-  const [curY, setCurY] = useState(0);
-  const [tgX, setTgX] = useState(0);
-  const [tgY, setTgY] = useState(0);
-  const [isSafari, setIsSafari] = useState(false);
+  const mouse = useRef({ x: 0, y: 0 });
+  const current = useRef({ x: 0, y: 0 });
+  const frameRef = useRef<number>();
 
-  // ✅ Protect document usage
+  /* ======================================================
+     Smooth Pointer Animation (RAF Loop)
+  ====================================================== */
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (!interactive) return;
 
-    const root = document.body;
+    const animate = () => {
+      // Smooth interpolation
+      current.current.x += (mouse.current.x - current.current.x) * 0.08;
+      current.current.y += (mouse.current.y - current.current.y) * 0.08;
 
-    root.style.setProperty(
-      "--gradient-background-start",
-      gradientBackgroundStart,
-    );
-    root.style.setProperty("--gradient-background-end", gradientBackgroundEnd);
-    root.style.setProperty("--first-color", firstColor);
-    root.style.setProperty("--second-color", secondColor);
-    root.style.setProperty("--third-color", thirdColor);
-    root.style.setProperty("--fourth-color", fourthColor);
-    root.style.setProperty("--fifth-color", fifthColor);
-    root.style.setProperty("--pointer-color", pointerColor);
-    root.style.setProperty("--size", size);
-    root.style.setProperty("--blending-value", blendingValue);
-  }, []);
+      if (pointerRef.current) {
+        pointerRef.current.style.transform = `translate3d(${current.current.x}px, ${current.current.y}px, 0)`;
+      }
 
-  // ✅ Mouse animation
-  useEffect(() => {
-    if (!interactiveRef.current) return;
-
-    const move = () => {
-      setCurX((prev) => prev + (tgX - prev) / 20);
-      setCurY((prev) => prev + (tgY - prev) / 20);
-
-      interactiveRef.current!.style.transform = `translate(${Math.round(
-        curX,
-      )}px, ${Math.round(curY)}px)`;
+      frameRef.current = requestAnimationFrame(animate);
     };
 
-    move();
-  }, [tgX, tgY]);
+    frameRef.current = requestAnimationFrame(animate);
 
-  // ✅ Protect navigator usage
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    setIsSafari(/^((?!chrome|android).)*safari/i.test(navigator.userAgent));
-  }, []);
+    return () => {
+      if (frameRef.current) cancelAnimationFrame(frameRef.current);
+    };
+  }, [interactive]);
 
-  const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (!interactiveRef.current) return;
+  /* ======================================================
+     Mouse Move Handler
+  ====================================================== */
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!containerRef.current) return;
 
-    const rect = interactiveRef.current.getBoundingClientRect();
-    setTgX(event.clientX - rect.left);
-    setTgY(event.clientY - rect.top);
+    const rect = containerRef.current.getBoundingClientRect();
+
+    mouse.current.x = e.clientX - rect.left;
+    mouse.current.y = e.clientY - rect.top;
   };
 
   return (
     <div
-      className={cn(
-        "w-full h-full absolute overflow-hidden top-0 left-0 bg-[linear-gradient(40deg,var(--gradient-background-start),var(--gradient-background-end))]",
-        containerClassName,
-      )}
+      ref={containerRef}
+      onMouseMove={interactive ? handleMouseMove : undefined}
+      className={cn("absolute inset-0 overflow-hidden", containerClassName)}
+      style={{
+        background: `linear-gradient(40deg, ${gradientBackgroundStart}, ${gradientBackgroundEnd})`,
+      }}
     >
-      <div className={cn("", className)}>{children}</div>
+      {/* ================= Content Layer ================= */}
+      <div className={cn("relative z-10", className)}>{children}</div>
 
+      {/* ================= Pointer Glow ================= */}
       {interactive && (
         <div
-          ref={interactiveRef}
-          onMouseMove={handleMouseMove}
-          className="absolute w-full h-full opacity-70"
+          ref={pointerRef}
+          className={cn(
+            "pointer-events-none absolute rounded-full",
+            blurStrength,
+          )}
+          style={{
+            width: size,
+            height: size,
+            opacity: pointerOpacity,
+            background: `radial-gradient(circle, rgba(${pointerColor},0.8) 0%, rgba(${pointerColor},0.4) 30%, transparent 70%)`,
+            mixBlendMode: blendingValue,
+            transform: "translate3d(0,0,0)",
+          }}
         />
       )}
     </div>

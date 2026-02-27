@@ -1,4 +1,3 @@
-"use client";
 import { useState } from "react";
 import { IoCopyOutline } from "react-icons/io5";
 
