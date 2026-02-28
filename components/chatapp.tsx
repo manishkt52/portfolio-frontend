@@ -9,7 +9,7 @@ type ChatMessage = {
   text: string;
 };
 
-const API_URL = "https://portfolio-backend-ths1.onrender.com/ask";
+const API_URL = "https://portfolio-backend-ths1.onrender.com";
 
 export default function ChatIcon() {
   const [isOpen, setIsOpen] = useState(false);
