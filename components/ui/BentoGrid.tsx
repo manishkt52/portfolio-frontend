@@ -1,14 +1,23 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { IoCopyOutline } from "react-icons/io5";
-import Lottie from "react-lottie";
 
 import { cn } from "@/lib/utils";
 import { BackgroundGradientAnimation } from "./GradientBg";
 import GridGlobe from "./GridGlobe";
 import animationData from "@/data/confetti.json";
 import MagicButton from "../MagicButton";
+
+/**
+ * IMPORTANT:
+ * react-lottie is NOT SSR safe.
+ * So we dynamically import it with ssr: false
+ */
+const Lottie = dynamic(() => import("react-lottie"), {
+  ssr: false,
+});
 
 export const BentoGrid = ({
   className,
@@ -62,10 +71,14 @@ export const BentoGridItem = ({
     },
   };
 
+  // ✅ SSR-safe clipboard handling
   const handleCopy = () => {
     const text = "hsu@jsmastery.pro";
-    navigator.clipboard.writeText(text);
-    setCopied(true);
+
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
+      navigator.clipboard.writeText(text);
+      setCopied(true);
+    }
   };
 
   return (
@@ -80,7 +93,7 @@ export const BentoGridItem = ({
       }}
     >
       <div className={`${id === 6 ? "flex justify-center" : ""} h-full`}>
-        {/* Main Background Image */}
+        {/* Background Image */}
         <div className="w-full h-full absolute inset-0">
           {img && (
             <img
@@ -109,14 +122,14 @@ export const BentoGridItem = ({
           </div>
         )}
 
-        {/* Background Animation (ID 6) */}
+        {/* Background Animation */}
         {id === 6 && (
           <BackgroundGradientAnimation>
             <div className="absolute z-50 inset-0 flex items-center justify-center text-white font-bold px-4 pointer-events-none text-3xl text-center md:text-4xl lg:text-7xl" />
           </BackgroundGradientAnimation>
         )}
 
-        {/* Content Section */}
+        {/* Content */}
         <div
           className={cn(
             titleClassName,
@@ -137,7 +150,7 @@ export const BentoGridItem = ({
             </div>
           )}
 
-          {/* GitHub 3D Globe */}
+          {/* 3D Globe */}
           {id === 2 && <GridGlobe />}
 
           {/* Tech Stack */}
@@ -167,7 +180,7 @@ export const BentoGridItem = ({
             </div>
           )}
 
-          {/* Copy Email Section */}
+          {/* Copy Email */}
           {id === 6 && (
             <div className="mt-5 relative">
               <div className="absolute -bottom-5 right-0">
